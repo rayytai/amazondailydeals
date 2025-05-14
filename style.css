@@ -1,0 +1,22 @@
+body { margin:0; padding:0; font-family:Arial,sans-serif; background:#f8f8f8; color:#333 }
+.container { width:90%; max-width:1200px; margin:0 auto }
+header { background:#ff9900; padding:10px 0 }
+header h1 a { color:#fff; text-decoration:none }
+.search-form { float:right }
+.search-form input, .search-form button { padding:5px }
+nav.tabs { margin:10px 0 }
+nav.tabs a { margin-right:15px; text-decoration:none; color:#555; padding:5px 10px }
+nav.tabs a.active, nav.tabs a:hover { background:#ff9900; color:#fff; border-radius:4px }
+main { display:flex }
+.deals-list { flex:3 }
+.deals-list table { width:100%; border-collapse:collapse; background:#fff }
+.deals-list th, .deals-list td { padding:10px; border-bottom:1px solid #eee; text-align:left }
+.deals-list tr:hover { background:#f1f1f1 }
+.deals-list td img { max-width:80px }
+.btn { padding:5px 10px; background:#ff9900; color:#fff; text-decoration:none; border-radius:4px }
+.sidebar { flex:1; margin-left:20px; background:#fff; padding:15px; border-radius:4px }
+.sidebar h2 { margin-top:0 }
+.sidebar ul { list-style:none; padding:0 }
+.sidebar li { margin-bottom:8px }
+.sidebar a { text-decoration:none; color:#555 }
+footer { background:#333; color:#ddd; padding:15px 0; text-align:center; margin-top:20px }
