@@ -10,25 +10,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
+      # 1. Check out the code with the GITHUB_TOKEN for write-permissions
       - name: Check out code
         uses: actions/checkout@v3
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: true
 
+      # 2. Set up Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
+      # 3. Install scraping libs
       - name: Install scraping libs
-        run: |
-          pip install requests beautifulsoup4
+        run: pip install requests beautifulsoup4
 
+      # 4. Fetch & write deals.json
       - name: Fetch deals via scraper
         env:
           PAAPI_PARTNER_TAG: ${{ secrets.PAAPI_PARTNER_TAG }}
         run: python fetch_deals.py
 
+      # 5. Commit & push deals.json back to main
       - name: Commit & push deals.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -40,5 +45,5 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "Daily scrape update"
-            git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git" HEAD:main
+            git push
           fi
