@@ -1,7 +1,8 @@
-permissions:
-  contents: write
 
 name: Daily Amazon Deals Scrape
+
+permissions:
+  contents: write
 
 on:
   schedule:
