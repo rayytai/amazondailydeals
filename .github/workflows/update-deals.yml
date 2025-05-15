@@ -2,48 +2,41 @@ name: Daily Amazon Deals Scrape
 
 on:
   schedule:
-    - cron: '0 2 * * *'
-  workflow_dispatch:
+    - cron: '0 2 * * *'       # every day at 2 AM UTC
+  workflow_dispatch:         # allow manual runs
 
 jobs:
   fetch:
     runs-on: ubuntu-latest
     steps:
 
-      # 1. Check out the code with the GITHUB_TOKEN for write-permissions
+      # 1️⃣ Check out with write perms
       - name: Check out code
         uses: actions/checkout@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: true
 
-      # 2. Set up Python
+      # 2️⃣ Install Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
-      # 3. Install scraping libs
+      # 3️⃣ Install scraper deps
       - name: Install scraping libs
         run: pip install requests beautifulsoup4
 
-      # 4. Fetch & write deals.json
+      # 4️⃣ Run your scraper
       - name: Fetch deals via scraper
+        run: python fetch_deals.py
         env:
           PAAPI_PARTNER_TAG: ${{ secrets.PAAPI_PARTNER_TAG }}
-        run: python fetch_deals.py
 
-      # 5. Commit & push deals.json back to main
-      - name: Commit & push deals.json
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git add deals.json
-          if git diff --cached --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "Daily scrape update"
-            git push
-          fi
+      # 5️⃣ Auto-commit any changes to deals.json
+      - name: Commit updated deals.json
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "🔄 Daily scrape update"
+          file_pattern: deals.json
+          branch: main
