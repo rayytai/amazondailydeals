@@ -1,0 +1,36 @@
+name: Daily Amazon Deals Update
+on:
+  schedule:
+    - cron: '0 2 * * *'  # every day at 2 AM UTC
+  workflow_dispatch:    # allows manual runs, too
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install PA-API SDK
+        run: pip install python-amazon-paapi
+
+      - name: Fetch 100 deals
+        env:
+          PAAPI_ACCESS_KEY: ${{ secrets.PAAPI_ACCESS_KEY }}
+          PAAPI_SECRET_KEY: ${{ secrets.PAAPI_SECRET_KEY }}
+          PAAPI_PARTNER_TAG: ${{ secrets.PAAPI_PARTNER_TAG }}
+        run: python fetch_deals.py
+
+      - name: Commit & push updated deals
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add deals.json
+          git commit -m "Daily update: 100 Amazon deals" || echo "No changes"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
