@@ -1,0 +1,25 @@
+{
+  "name": "amazondailydeals",
+  "version": "1.0.0",
+  "main": "deals.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rayytai/hotdailydeals.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rayytai/hotdailydeals/issues"
+  },
+  "homepage": "https://github.com/rayytai/hotdailydeals#readme",
+  "description": "",
+  "dependencies": {
+    "axios": "^1.9.0",
+    "cheerio": "^1.0.0",
+    "puppeteer": "^24.8.2"
+  }
+}
