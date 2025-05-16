@@ -1,42 +1,28 @@
 // deals.js
-const fs        = require('fs');
-const puppeteer = require('puppeteer');
-
-(async () => {
-  // Launch headless Chrome
-  const browser = await puppeteer.launch({
-    args: ['--no-sandbox','--disable-setuid-sandbox']
-  });
-  const page = await browser.newPage();
-  await page.setUserAgent('Mozilla/5.0');
-  // Go to Amazon Gold Box deals
-  await page.goto('https://www.amazon.com/gp/goldbox', { waitUntil: 'networkidle2' });
-
-  // Wait for deals to render (adjust selector if needed)
-  await page.waitForSelector('a.a-link-normal[href*="/dp/"]', { timeout: 10000 });
-
-  // Extract deals
-  const deals = await page.$$eval(
-    'a.a-link-normal[href*="/dp/"]',
-    links => links.map(a => {
-      // Title: any span whose class includes "truncate"
-      const titleEl = a.querySelector('span[class*="truncate"]');
-      // Price: the whole-dollar span
-      const priceEl = a.querySelector('span.a-price-whole');
-      return {
-        title: titleEl ? titleEl.innerText.trim() : null,
-        link:  'https://amazon.com' + a.getAttribute('href'),
-        price: priceEl ? priceEl.innerText.trim() : null
-      };
-    }).filter(d => d.title && d.price)
-  );
-
-  await browser.close();
-
-  // Save to deals.json
-  fs.writeFileSync('deals.json', JSON.stringify(deals, null, 2));
-  console.log(`Fetched ${deals.length} deals`);
-})().catch(err => {
-  console.error(err);
-  process.exit(1);
+document.addEventListener('DOMContentLoaded', () => {
+  fetch('deals.json')
+    .then(res => {
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      return res.json();
+    })
+    .then(deals => {
+      const tbody = document.getElementById('deals-body');
+      deals.forEach(deal => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><a href="${deal.link}" target="_blank" rel="noopener noreferrer">${deal.title}</a></td>
+          <td>$${deal.price}</td>
+          <td>Amazon</td>
+          <td>—</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    })
+    .catch(err => {
+      console.error('Failed to load deals:', err);
+      const tbody = document.getElementById('deals-body');
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td colspan="4" style="color:red;">Error loading deals.</td>`;
+      tbody.appendChild(tr);
+    });
 });
