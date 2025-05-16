@@ -1,3 +1,6 @@
+permissions:
+  contents: write
+
 name: update-deals
 
 on:
@@ -12,6 +15,9 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+
+     	with:
+          persist-credentials: true
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
